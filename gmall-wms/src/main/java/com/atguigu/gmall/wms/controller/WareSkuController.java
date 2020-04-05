@@ -1,7 +1,8 @@
-package com.atguigu.gmall.sms.controller;
+package com.atguigu.gmall.wms.controller;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,34 +14,38 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.atguigu.gmall.sms.entity.SpuBoundsEntity;
-import com.atguigu.gmall.sms.service.SpuBoundsService;
+import com.atguigu.gmall.wms.entity.WareSkuEntity;
+import com.atguigu.gmall.wms.service.WareSkuService;
 import com.atguigu.gmall.common.bean.PageResultVo;
 import com.atguigu.gmall.common.bean.ResponseVo;
 import com.atguigu.gmall.common.bean.PageParamVo;
 
 /**
- * 商品spu积分设置
+ * 商品库存
  *
  * @author liuxiaofeng
  * @email xfliu@atguigu.com
- * @date 2020-03-31 21:22:37
+ * @date 2020-04-01 23:02:39
  */
-@Api(tags = "商品spu积分设置 管理")
+@Api(tags = "商品库存 管理")
 @RestController
-@RequestMapping("sms/spubounds")
-public class SpuBoundsController {
+@RequestMapping("wms/waresku")
+public class WareSkuController {
 
     @Autowired
-    private SpuBoundsService spuBoundsService;
+    private WareSkuService wareSkuService;
 
+    @GetMapping("sku/{skuId}")
+    public ResponseVo<List<WareSkuEntity>> queryWareSkusBySkuId(@PathVariable("skuId")Long skuId){
+        return ResponseVo.ok(wareSkuService.list(new QueryWrapper<WareSkuEntity>().eq("sku_id",skuId)));
+    }
     /**
      * 列表
      */
     @GetMapping
     @ApiOperation("分页查询")
     public ResponseVo<PageResultVo> list(PageParamVo paramVo){
-        PageResultVo pageResultVo = spuBoundsService.queryPage(paramVo);
+        PageResultVo pageResultVo = wareSkuService.queryPage(paramVo);
 
         return ResponseVo.ok(pageResultVo);
     }
@@ -51,10 +56,10 @@ public class SpuBoundsController {
      */
     @GetMapping("{id}")
     @ApiOperation("详情查询")
-    public ResponseVo<SpuBoundsEntity> querySpuBoundsById(@PathVariable("id") Long id){
-		SpuBoundsEntity spuBounds = spuBoundsService.getById(id);
+    public ResponseVo<WareSkuEntity> queryWareSkuById(@PathVariable("id") Long id){
+		WareSkuEntity wareSku = wareSkuService.getById(id);
 
-        return ResponseVo.ok(spuBounds);
+        return ResponseVo.ok(wareSku);
     }
 
     /**
@@ -62,8 +67,8 @@ public class SpuBoundsController {
      */
     @PostMapping
     @ApiOperation("保存")
-    public ResponseVo<Object> save(@RequestBody SpuBoundsEntity spuBounds){
-		spuBoundsService.save(spuBounds);
+    public ResponseVo<Object> save(@RequestBody WareSkuEntity wareSku){
+		wareSkuService.save(wareSku);
 
         return ResponseVo.ok();
     }
@@ -73,8 +78,8 @@ public class SpuBoundsController {
      */
     @PostMapping("/update")
     @ApiOperation("修改")
-    public ResponseVo update(@RequestBody SpuBoundsEntity spuBounds){
-		spuBoundsService.updateById(spuBounds);
+    public ResponseVo update(@RequestBody WareSkuEntity wareSku){
+		wareSkuService.updateById(wareSku);
 
         return ResponseVo.ok();
     }
@@ -85,7 +90,7 @@ public class SpuBoundsController {
     @PostMapping("/delete")
     @ApiOperation("删除")
     public ResponseVo delete(@RequestBody List<Long> ids){
-		spuBoundsService.removeByIds(ids);
+		wareSkuService.removeByIds(ids);
 
         return ResponseVo.ok();
     }

@@ -4,7 +4,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: localhost:8848
-        namespace: cf09dffc-9b66-4b40-9a1b-fed16dc8cf79
+        server-addr: nacos.com
+        namespace: 082591aa-2fe2-49fa-b32a-229d0ba3621b
         group: dev
         file-extension: yml

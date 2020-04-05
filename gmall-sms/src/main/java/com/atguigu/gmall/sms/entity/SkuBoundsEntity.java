@@ -16,8 +16,8 @@ import lombok.Data;
  * @date 2020-03-31 21:22:37
  */
 @Data
-@TableName("sms_spu_bounds")
-public class SpuBoundsEntity implements Serializable {
+@TableName("sms_sku_bounds")
+public class SkuBoundsEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -28,7 +28,7 @@ public class SpuBoundsEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private Long spuId;
+	private Long skuId;
 	/**
 	 * 成长积分
 	 */

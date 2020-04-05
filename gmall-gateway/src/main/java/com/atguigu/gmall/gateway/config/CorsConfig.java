@@ -11,8 +11,7 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("www.gmall.com");
-        configuration.addAllowedOrigin("gmall.com");
+        configuration.addAllowedOrigin("http://manager.gmall.com");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
