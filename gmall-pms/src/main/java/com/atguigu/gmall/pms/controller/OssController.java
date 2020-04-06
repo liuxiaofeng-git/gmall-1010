@@ -22,16 +22,23 @@ public class OssController {
     @GetMapping("policy")
     public ResponseVo<Object> policy() {
         String accessId = "LTAI4FdtNTcKPZGatuyo4iGf"; // 请填写您的AccessKeyId。
+        //String accessId = "LTAI4Fh3FUjUiXBJRT1uTCVL"; // 请填写您的AccessKeyId。
+
         String accessKey = "WQIApOe1C9NiZmrk17KXlBUb6NBjIS"; // 请填写您的AccessKeySecret。
+        // String accessKey = "dikhTNspA348l21EedrhXT8xd0BS0N"; // 请填写您的AccessKeySecret。
+
         String endpoint = "oss-cn-shanghai.aliyuncs.com"; // 请填写您的 endpoint。
         String bucket = "scw-sh191010java117"; // 请填写您的 bucketname 。
+        // String bucket = "zyzyzyzy"; // 请填写您的 bucketname 。
+
         String host = "https://" + bucket + "." + endpoint; // host的格式为 bucketname.endpoint
         // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-       // String callbackUrl = "http://88.88.88.88:8888";
-        String dir = "gmall/"+new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // 用户上传文件时指定的前缀。
+        // String callbackUrl = "http://88.88.88.88:8888";
+        String dir = "gmall/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // 用户上传文件时指定的前缀。
+        // String dir = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // 用户上传文件时指定的前缀。
 
         OSSClient client = new OSSClient(endpoint, accessId, accessKey);
-        Map<String, String> respMap =null;
+        Map<String, String> respMap = null;
         try {
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;

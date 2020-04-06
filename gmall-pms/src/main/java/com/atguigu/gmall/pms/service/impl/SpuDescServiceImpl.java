@@ -35,7 +35,7 @@ public class SpuDescServiceImpl extends ServiceImpl<SpuDescMapper, SpuDescEntity
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public Long saveSpuDesc(SpuVo spuVo) {
         SpuDescEntity spuDescEntity = new SpuDescEntity();
         Long spuId = spuVo.getId();
