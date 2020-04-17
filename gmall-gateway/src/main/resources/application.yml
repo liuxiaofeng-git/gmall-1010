@@ -27,3 +27,11 @@ spring:
           uri: lb://wms-service
           predicates:
             - Path=/wms/**
+        - id: index-route
+          uri: lb://index-service
+          predicates:
+            - Path=/index/**
+        - id: item-route
+          uri: lb://item-service
+          predicates:
+            - Path=/item/**

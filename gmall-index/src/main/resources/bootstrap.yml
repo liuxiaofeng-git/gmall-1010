@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: index-service
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.com
+        namespace: f94ad085-b5fd-48ae-9a7f-a06d5a41371e
+        group: dev
+        file-extension: yml

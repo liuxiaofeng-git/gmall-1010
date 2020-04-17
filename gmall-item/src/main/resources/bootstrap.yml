@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: item-service
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.com
+        namespace: 227cd67b-1036-4056-8eba-7458da0670bd
+        file-extension: yml

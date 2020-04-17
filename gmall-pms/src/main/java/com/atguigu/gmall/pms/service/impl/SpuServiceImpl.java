@@ -13,6 +13,7 @@ import com.atguigu.gmall.pms.vo.SpuAttrValueVo;
 import com.atguigu.gmall.pms.vo.SpuVo;
 import com.atguigu.gmall.sms.vo.SkuSaleVo;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
    @Autowired
    private SpuDescService spuDescService;
 
+   @Autowired
+   private RabbitTemplate rabbitTemplate;
+
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
         IPage<SpuEntity> page = this.page(
@@ -94,6 +98,9 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         //2保存sku相关的信息
         saveSku(spuVo, spuId);
         //int i=1/0;
+
+        //发送消息给交换机进行修改索引库中的数据
+        this.rabbitTemplate.convertAndSend("pms.item.exchange","item.insert",spuVo.getId());
     }
 
     @Override

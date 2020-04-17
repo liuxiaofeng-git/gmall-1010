@@ -3,4 +3,12 @@
 
 <mapper namespace="com.atguigu.gmall.pms.mapper.CategoryMapper">
 
+    <resultMap id="queryCategoryVoMap" type="com.atguigu.gmall.pms.vo.CategoryVo" autoMapping="true">
+        <id column="id" property="id"></id>
+        <collection property="subs" javaType="List" ofType="CategoryEntity" column="id" autoMapping="true" select="queryCategoryVoByParentId"></collection>
+    </resultMap>
+    <select id="queryCategoryVoByParentId" resultMap="queryCategoryVoMap">
+        select * from pms_category where parent_id = #{pid}
+    </select>
+
 </mapper>

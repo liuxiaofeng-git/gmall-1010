@@ -2,6 +2,8 @@ package com.atguigu.gmall.pms.controller;
 
 import java.util.List;
 
+import com.atguigu.gmall.pms.vo.CategoryVo;
+import com.atguigu.gmall.pms.vo.ItemCategoryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,18 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @GetMapping("all/{cid3}")
+    public ResponseVo<List<ItemCategoryVo>> queryCategoriesByCid3(@PathVariable("cid3") Long cid3) {
+        List<ItemCategoryVo> itemCategoryVos = this.categoryService.queryCategoriesByCid3(cid3);
+        return ResponseVo.ok(itemCategoryVos);
+    }
+
+    @GetMapping("levelOne/{pid}")
+    public ResponseVo<List<CategoryVo>> queryCategoryVoByParentId(@PathVariable("pid") Long pid) {
+        List<CategoryVo> categoryVoList = this.categoryService.queryCategoryVoByParentId(pid);
+        return ResponseVo.ok(categoryVoList);
+    }
 
     @GetMapping("parent/{parentId}")
     public ResponseVo<List<CategoryEntity>> queryCategoryByParentId(@PathVariable("parentId") Long parentId) {
