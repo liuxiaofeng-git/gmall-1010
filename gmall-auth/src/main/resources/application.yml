@@ -1,0 +1,30 @@
+server:
+  port: 18089
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.com
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+  zipkin:
+    base-url: http://localhost:9411/
+    discovery-client-enabled: false
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1
+
+feign:
+  sentinel:
+    enabled: true
+auth:
+  jwt:
+    pubKeyPath: D:\\develop\\ideaworkspace\\gmall-1010\\rsa\\rsa.pub
+    priKeyPath: D:\\develop\\ideaworkspace\\gmall-1010\\rsa\\rsa.pri
+    secret: ieiwefkIEOEO@&*$2349832jk
+    expire: 30
+    cookieName: GMALL_TOKEN

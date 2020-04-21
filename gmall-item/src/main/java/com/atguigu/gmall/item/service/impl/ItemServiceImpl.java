@@ -39,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemVo load(Long skuId) {
         ItemVo itemVo = new ItemVo();
+        //异步编排开启多线程提高响应速度
         CompletableFuture<SkuEntity> skuEntityCompletableFuture = CompletableFuture.supplyAsync(() -> {
             //查询出sku对象
             ResponseVo<SkuEntity> skuEntityResponseVo = this.pmsFeignClient.querySkuById(skuId);

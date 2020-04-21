@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.com
+        namespace: 419bdacb-fd41-4d0e-a73c-658121c64f55
+        file-extension: yml

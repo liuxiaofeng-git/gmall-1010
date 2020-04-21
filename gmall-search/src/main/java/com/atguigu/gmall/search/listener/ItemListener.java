@@ -1,4 +1,4 @@
-package com.atguigu.gmall.search.listern;
+package com.atguigu.gmall.search.listener;
 
 import com.atguigu.gmall.common.bean.ResponseVo;
 import com.atguigu.gmall.pms.entity.*;
@@ -8,9 +8,7 @@ import com.atguigu.gmall.search.feign.GmallPmsFeignClient;
 import com.atguigu.gmall.search.feign.GmallWmsFeignClient;
 import com.atguigu.gmall.search.repository.GoodsRepository;
 import com.atguigu.gmall.wms.entity.WareSkuEntity;
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.impl.AMQChannel;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ItemListern {
+public class ItemListener {
 
     @Autowired
     private GmallPmsFeignClient pmsFeignClient;

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: msg-service
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.com
+        namespace: 68f4d7f4-3e55-4e44-9f71-2643d410f3f1
+        file-extension: yml

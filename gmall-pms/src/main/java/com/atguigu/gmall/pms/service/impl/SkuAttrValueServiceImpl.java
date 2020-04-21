@@ -61,4 +61,10 @@ public class SkuAttrValueServiceImpl extends ServiceImpl<SkuAttrValueMapper, Sku
         return null;
     }
 
+    @Override
+    public List<SkuAttrValueEntity> querySkuSaleAttrValuesBySkuId(Long skuId) {
+
+        return this.skuAttrValueMapper.selectList(new QueryWrapper<SkuAttrValueEntity>().eq("sku_id", skuId));
+    }
+
 }
