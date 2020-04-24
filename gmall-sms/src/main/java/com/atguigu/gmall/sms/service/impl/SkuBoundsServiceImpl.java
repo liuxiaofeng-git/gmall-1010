@@ -35,6 +35,9 @@ public class SkuBoundsServiceImpl extends ServiceImpl<SkuBoundsMapper, SkuBounds
     @Autowired
     private SkuLadderMapper skuLadderMapper;
 
+    @Autowired
+    private SkuBoundsMapper skuBoundsMapper;
+
 
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
@@ -93,6 +96,11 @@ public class SkuBoundsServiceImpl extends ServiceImpl<SkuBoundsMapper, SkuBounds
         itemSaleVos.add(itemSaleVo1);
         itemSaleVos.add(itemSaleVo2);
         return itemSaleVos;
+    }
+
+    @Override
+    public SkuBoundsEntity queryBoundsByskuId(Long skuId) {
+        return this.skuBoundsMapper.selectOne(new QueryWrapper<SkuBoundsEntity>().eq("sku_id",skuId));
     }
 
 }

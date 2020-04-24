@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: order-service
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.com
+        namespace: d534b8dc-23ff-418a-a568-c7972047135e
+        file-extension: yml

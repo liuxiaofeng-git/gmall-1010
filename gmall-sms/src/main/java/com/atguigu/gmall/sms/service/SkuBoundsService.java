@@ -23,5 +23,7 @@ public interface SkuBoundsService extends IService<SkuBoundsEntity> {
     void saveSkuSale(SkuSaleVo skuSaleVo);
 
     List<ItemSaleVo> querySkuBySkuId(Long skuId);
+
+    SkuBoundsEntity queryBoundsByskuId(Long skuId);
 }
 

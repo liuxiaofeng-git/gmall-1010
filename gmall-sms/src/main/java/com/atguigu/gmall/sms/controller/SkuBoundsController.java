@@ -75,6 +75,14 @@ public class SkuBoundsController {
         return ResponseVo.ok(spuBounds);
     }
 
+    @GetMapping("bounds/{skuId}")
+    @ApiOperation("积分详情查询")
+    public ResponseVo<SkuBoundsEntity> queryBoundsByskuId(@PathVariable("skuId") Long skuId) {
+        SkuBoundsEntity spuBounds = skuBoundsService.queryBoundsByskuId(skuId);
+
+        return ResponseVo.ok(spuBounds);
+    }
+
     /**
      * 保存
      */

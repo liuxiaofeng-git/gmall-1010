@@ -1,6 +1,9 @@
 package com.atguigu.gmall.ums.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -16,6 +19,9 @@ import com.atguigu.gmall.ums.service.UserAddressService;
 @Service("userAddressService")
 public class UserAddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddressEntity> implements UserAddressService {
 
+    @Autowired
+    private UserAddressMapper userAddressMapper;
+
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
         IPage<UserAddressEntity> page = this.page(
@@ -24,6 +30,12 @@ public class UserAddressServiceImpl extends ServiceImpl<UserAddressMapper, UserA
         );
 
         return new PageResultVo(page);
+    }
+
+    @Override
+    public List<UserAddressEntity> queryAddressesByUserId(Long userId) {
+
+        return this.userAddressMapper.selectList(new QueryWrapper<UserAddressEntity>().eq("user_id",userId));
     }
 
 }

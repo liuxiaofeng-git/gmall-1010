@@ -9,12 +9,10 @@ import com.atguigu.gmall.cart.feign.GmallWmsFeignClient;
 import com.atguigu.gmall.cart.interceptor.LoginInterceptor;
 import com.atguigu.gmall.cart.service.CartService;
 import com.atguigu.gmall.common.bean.ResponseVo;
-import com.atguigu.gmall.common.utils.CookieUtils;
 import com.atguigu.gmall.pms.entity.SkuAttrValueEntity;
 import com.atguigu.gmall.pms.entity.SkuEntity;
 import com.atguigu.gmall.sms.vo.ItemSaleVo;
 import com.atguigu.gmall.wms.entity.WareSkuEntity;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +36,7 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private GmallWmsFeignClient wmsFeignClient;
+
 
     private static final String KEY_PREFIX = "cart:";
     private static final String PRICE_PREFIX = "cart:price:";
@@ -182,6 +181,16 @@ public class CartServiceImpl implements CartService {
         if (hashOps.hasKey(skuId.toString())) {
             hashOps.delete(skuId.toString());
         }
+    }
+
+    @Override
+    public List<Cart> queryCheckCartsByUserId(Long userId) {
+        BoundHashOperations<String, Object, Object> hashOps = this.redisTemplate.boundHashOps(KEY_PREFIX + userId);
+        List<Object> cartsJson = hashOps.values();
+        if (CollectionUtils.isEmpty(cartsJson)) {
+            return null;
+        }
+       return cartsJson.stream().map(cartJson-> JSON.parseObject(cartJson.toString(), Cart.class)).filter(Cart::getCheck).collect(Collectors.toList());
     }
 
     private String generateKey() {

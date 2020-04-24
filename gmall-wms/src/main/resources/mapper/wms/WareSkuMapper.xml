@@ -3,4 +3,28 @@
 
 <mapper namespace="com.atguigu.gmall.wms.mapper.WareSkuMapper">
 
+    <select id="checkStock" resultType="WareSkuEntity">
+        SELECT
+            *
+        FROM
+            wms_ware_sku
+        WHERE
+            stock - stock_locked >= #{count}
+        AND sku_id = #{skuId}
+    </select>
+
+    <update id="lockStock">
+        UPDATE wms_ware_sku
+        SET stock_locked = stock_locked + #{count}
+        WHERE
+            id = #{id}
+    </update>
+
+    <update id="unLockStock">
+            UPDATE wms_ware_sku
+            SET stock_locked = stock_locked - #{count}
+            WHERE
+                id = #{id}
+    </update>
+
 </mapper>
