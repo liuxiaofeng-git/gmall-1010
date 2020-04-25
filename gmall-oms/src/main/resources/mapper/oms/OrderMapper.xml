@@ -3,4 +3,10 @@
 
 <mapper namespace="com.atguigu.gmall.oms.mapper.OrderMapper">
 
+    <update id="updateStatus">
+        UPDATE oms_order
+        SET oms_order.`status` = #{status}
+        WHERE
+            order_sn = #{orderToken}
+    </update>
 </mapper>

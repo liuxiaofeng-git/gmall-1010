@@ -12,6 +12,7 @@ import com.atguigu.gmall.pms.entity.*;
 import com.atguigu.gmall.sms.entity.SkuBoundsEntity;
 import com.atguigu.gmall.ums.entity.UserAddressEntity;
 import com.atguigu.gmall.ums.entity.UserEntity;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +56,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderEntity> impl
 
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
@@ -184,8 +189,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderEntity> impl
 
             this.orderItemService.saveBatch(orderItemEntities);
 
+            //如果用户下单后一直不支付，库存处于锁定状态，陷入店家商品卖不出，买家无法购买的情况。所以，需要定时关单，发送消息
+        this.rabbitTemplate.convertAndSend("order.exchange","order.ttl",orderSubmitVo.getOrderToken());
        // CompletableFuture.allOf().join();
         return orderEntity;
     }
+
+    @Override
+    public int closeOrderByOrderToken(String orderToken) {
+        OrderEntity orderEntity = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderToken));
+        if (orderEntity.getStatus()==0) {
+           return this.orderMapper.updateStatus(orderToken,4);
+        }
+        return 0;
+    }
+
 
 }

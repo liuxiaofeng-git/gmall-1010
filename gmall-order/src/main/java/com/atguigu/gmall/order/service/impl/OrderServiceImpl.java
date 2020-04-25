@@ -175,65 +175,66 @@ public class OrderServiceImpl implements OrderService {
         String orderToken = orderSubmitVo.getOrderToken();
 
         //防重
-        CompletableFuture.runAsync(() -> {
-            String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
-            Boolean execute = this.redisTemplate.execute(new DefaultRedisScript<>(script, Boolean.class), Arrays.asList(KEY_PREFIX + orderToken), orderToken);
-            if (!execute) {
-                throw new OrderException("提交频率过快，请勿重复提交");
-            }
-        }, threadPoolExecutor);
+        String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
+        Boolean execute = this.redisTemplate.execute(new DefaultRedisScript<>(script, Boolean.class), Arrays.asList(KEY_PREFIX + orderToken), orderToken);
+        if (!execute) {
+            throw new OrderException("提交频率过快，请勿重复提交");
+        }
+//        CompletableFuture.runAsync(() -> {
+//        }, threadPoolExecutor);
 
         //验总价
-        CompletableFuture.runAsync(() -> {
-            if (CollectionUtils.isEmpty(orderItems)) {
-                throw new OrderException("您还未勾选商品，请选择要购买的商品");
+        if (CollectionUtils.isEmpty(orderItems)) {
+            throw new OrderException("您还未勾选商品，请选择要购买的商品");
+        }
+        BigDecimal currentPrice = orderItems.stream().map(orderItemVo -> {
+            SkuEntity skuEntity = this.pmsFeignClient.querySkuById(orderItemVo.getSkuId()).getData();
+            if (skuEntity == null) {
+                return new BigDecimal(0);
             }
-            BigDecimal currentPrice = orderItems.stream().map(orderItemVo -> {
-                SkuEntity skuEntity = this.pmsFeignClient.querySkuById(orderItemVo.getSkuId()).getData();
-                if (skuEntity == null) {
-                    return new BigDecimal(0);
-                }
-                return skuEntity.getPrice().multiply(orderItemVo.getCount());
-            }).reduce((a, b) -> a.add(b)).get();
-            if (orderSubmitVo.getTotalPrice().compareTo(currentPrice) != 0) {
-                throw new OrderException("页面已过期，刷新后再试！");
-            }
-        }, threadPoolExecutor);
+            return skuEntity.getPrice().multiply(orderItemVo.getCount());
+        }).reduce((a, b) -> a.add(b)).get();
+        if (orderSubmitVo.getTotalPrice().compareTo(currentPrice) != 0) {
+            throw new OrderException("页面已过期，刷新后再试！");
+        }
+//        CompletableFuture.runAsync(() -> {
+//        }, threadPoolExecutor);
 
         //验库存并锁定库存
-        CompletableFuture.runAsync(() -> {
-            List<SkuLockVo> skuLockVos = orderItems.stream().map(orderItemVo -> {
-                SkuLockVo skuLockVo = new SkuLockVo();
-                skuLockVo.setSkuId(orderItemVo.getSkuId());
-                skuLockVo.setCount(orderItemVo.getCount());
-                skuLockVo.setOrderToken(orderToken);
-                return skuLockVo;
-            }).collect(Collectors.toList());
-            List<SkuLockVo> skuLockVoList = this.wmsFeignClient.checkAndLock(skuLockVos).getData();
-            if (!CollectionUtils.isEmpty(skuLockVoList)) {
-                throw new OrderException("手慢了，库存不足：" + JSON.toJSONString(skuLockVoList));
-            }
-        }, threadPoolExecutor);
+        List<SkuLockVo> skuLockVos = orderItems.stream().map(orderItemVo -> {
+            SkuLockVo skuLockVo = new SkuLockVo();
+            skuLockVo.setSkuId(orderItemVo.getSkuId());
+            skuLockVo.setCount(orderItemVo.getCount());
+            skuLockVo.setOrderToken(orderToken);
+            return skuLockVo;
+        }).collect(Collectors.toList());
+        List<SkuLockVo> skuLockVoList = this.wmsFeignClient.checkAndLock(skuLockVos).getData();
+        if (!CollectionUtils.isEmpty(skuLockVoList)) {
+            throw new OrderException("手慢了，库存不足：" + JSON.toJSONString(skuLockVoList));
+        }
+//        CompletableFuture.runAsync(() -> {
+//        }, threadPoolExecutor);
 
         //下单，生成订单
-        CompletableFuture.runAsync(() -> {
-            try {
-                orderSubmitVo.setUserId(userId);
-                OrderEntity orderEntity = this.omsFeignClient.save(orderSubmitVo).getData();
-            } catch (Exception e) {
-                //释放锁定库存
-                this.rabbitTemplate.convertAndSend("order.exchange", "stock.unlock", orderToken);
-                throw new OrderException("订单保存异常，请稍候再试");
-            }
-        }, threadPoolExecutor);
+        try {
+            orderSubmitVo.setUserId(userId);
+            OrderEntity orderEntity = this.omsFeignClient.save(orderSubmitVo).getData();
+        } catch (Exception e) {
+            //释放锁定库存
+            this.rabbitTemplate.convertAndSend("order.exchange", "stock.unlock", orderToken);
+            throw new OrderException("订单保存异常，请稍候再试");
+        }
+//        CompletableFuture.runAsync(() -> {
+//        }, threadPoolExecutor);
 
         //删除购物车记录
-        CompletableFuture.runAsync(() -> {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("userId", userId);
-            List<Long> skuIds = orderItems.stream().map(OrderItemVo::getSkuId).collect(Collectors.toList());
-            map.put("skuIds", JSON.toJSONString(skuIds));
-            this.rabbitTemplate.convertAndSend("order.exchange", "order.delete", map);
-        }, threadPoolExecutor);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        List<Long> skuIds = orderItems.stream().map(OrderItemVo::getSkuId).collect(Collectors.toList());
+        map.put("skuIds", JSON.toJSONString(skuIds));
+        this.rabbitTemplate.convertAndSend("order.exchange", "order.delete", map);
+//        CompletableFuture.runAsync(() -> {
+//        }, threadPoolExecutor);
     }
+
 }
