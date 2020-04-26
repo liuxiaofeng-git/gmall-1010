@@ -169,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void submit(OrderSubmitVo orderSubmitVo) {
+    public OrderEntity submit(OrderSubmitVo orderSubmitVo) {
         Long userId = LoginInterceptor.getUserInfo().getUserId();
         List<OrderItemVo> orderItems = orderSubmitVo.getItems();
         String orderToken = orderSubmitVo.getOrderToken();
@@ -216,9 +216,10 @@ public class OrderServiceImpl implements OrderService {
 //        }, threadPoolExecutor);
 
         //下单，生成订单
+        OrderEntity orderEntity =null;
         try {
             orderSubmitVo.setUserId(userId);
-            OrderEntity orderEntity = this.omsFeignClient.save(orderSubmitVo).getData();
+            orderEntity = this.omsFeignClient.save(orderSubmitVo).getData();
         } catch (Exception e) {
             //释放锁定库存
             this.rabbitTemplate.convertAndSend("order.exchange", "stock.unlock", orderToken);
@@ -235,6 +236,8 @@ public class OrderServiceImpl implements OrderService {
         this.rabbitTemplate.convertAndSend("order.exchange", "order.delete", map);
 //        CompletableFuture.runAsync(() -> {
 //        }, threadPoolExecutor);
+
+        return orderEntity;
     }
 
 }
